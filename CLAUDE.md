@@ -1,0 +1,74 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+บอทดึงเทรนด์ X (Twitter) จากเว็บรวมเทรนด์ฟรี **trends24.in** แล้วส่งแจ้งเตือนเข้า **Telegram**
+รายชั่วโมง ไม่ใช้ X API อย่างเป็นทางการ (เลี่ยงค่าใช้จ่าย tier เสียเงิน) — ดึงด้วยการ scrape HTML
+
+## Commands
+
+รันจาก venv เสมอ (`.venv\Scripts\python.exe`) เพราะ deps อยู่ในนั้น:
+
+```bash
+# ติดตั้ง deps
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# ทดสอบ scraper อย่างเดียว (ไม่ส่ง Telegram) — พิมพ์เทรนด์ออก console
+.venv\Scripts\python.exe trends.py
+
+# รันจริง 1 รอบ (ดึง + ส่ง Telegram)
+.venv\Scripts\python.exe main.py
+
+# รันวนเองทุก N นาที
+.venv\Scripts\python.exe main.py --loop --interval 60
+
+# หา chat_id ของ Telegram
+.venv\Scripts\python.exe get_chat_id.py
+```
+
+การรันอัตโนมัติมี 2 ทาง: (1) บนเครื่อง — Windows Task Scheduler เรียก `run_hourly.bat`;
+(2) บนคลาวด์ — GitHub Actions cron รายชั่วโมง ([.github/workflows/trends.yml](.github/workflows/trends.yml))
+
+**PowerShell** ต้องมี `.\` นำหน้า path ของ .exe เสมอ (`.\.venv\Scripts\python.exe`) ไม่งั้นมันตีความ
+`.venv` เป็นชื่อ module; cmd ไม่ต้องมี
+
+## Architecture
+
+ไปป์ไลน์ตรงไปตรงมา 3 โมดูล แยกหน้าที่ชัดเจน:
+
+- **[trends.py](trends.py)** — scrape trends24.in. `fetch_trends()` คืน `list[dict]` แต่ละอันมี
+  `{"name", "url"}` (url แปลง `twitter.com`→`x.com` แล้ว). จุดเปราะบางที่สุดของโปรเจกต์: HTML ของเว็บ
+  ใช้ attribute **ไม่มี quote** (`class=trend-card__list`) และไม่มี wrapper `.trend-card` — ถ้าเว็บ
+  เปลี่ยนโครงสร้าง ต้องแก้ selector ที่นี่. หน้าเว็บมีหลาย snapshot ต่อวัน โค้ดจงใจเลือก
+  `ol.trend-card__list` **ใบแรก** (ล่าสุดที่สุด). ต้อง force `resp.encoding = "utf-8"` ไม่งั้น
+  เทรนด์ภาษาญี่ปุ่น/ไทยในหน้า worldwide จะเป็น mojibake. **ไม่มียอดทวีต** — trends24 ปล่อย
+  `data-count` ว่างในทุก snapshot
+- **[notifier.py](notifier.py)** — ส่งเข้า Telegram Bot API (`sendMessage`, `parse_mode=HTML`)
+- **[main.py](main.py)** — orchestrator: อ่าน settings → ดึงทุก region → สร้างข้อความ → ส่ง → บันทึก state
+
+**Config 2 ทาง:** `load_settings()` อ่าน **env var ก่อน** (`BOT_TOKEN`/`CHAT_ID`/`REGIONS`/`TOP_N` —
+ใช้บน GitHub Actions) ถ้าไม่มีค่อยตกไปอ่าน `config.ini` (รันบนเครื่อง). อย่าเรียก `load_config`
+เดิม — เปลี่ยนเป็น `load_settings` ที่คืน dict แล้ว
+
+**State / เครื่องหมายอันดับ:** `state.json` เก็บ **รายชื่อเรียงตามอันดับ** ต่อ region.
+`_rank_marker()` เทียบชื่อ+ตำแหน่งกับรอบก่อน → 🆕 (ใหม่) / 🔺n (ขึ้น) / 🔻n (ลง). ลบ `state.json`
+= รอบถัดไปทุกอันเป็น 🆕. บนคลาวด์ workflow `git add -f state.json` (ไฟล์นี้ถูก git-ignore) แล้ว
+commit กลับ เพื่อให้จำอันดับข้ามรอบได้
+
+**การกันพัง:** ถ้า region ใด fetch ไม่สำเร็จ `build_message` จับ exception เฉพาะ region นั้นและทำ
+ต่อ region อื่น ส่วน `--loop` จับ exception ทั้งรอบไม่ให้ loop ตาย
+
+## Config & secrets
+
+`config.ini` (git-ignored) ถือ `bot_token` + `chat_id` + `regions` + `top_n` — คัดลอกจาก
+`config.example.ini`. `regions` ใช้ slug ตาม URL ของ trends24.in (`thailand`, `worldwide`,
+`japan`, ...); ป้ายชื่อ+ธงที่แสดงผลกำหนดใน `REGION_LABELS` ใน [trends.py](trends.py) — เพิ่ม region
+ใหม่ควรเพิ่ม label คู่กันด้วย
+
+## Windows notes
+
+- Console เป็น cp1252 → print emoji จะ crash. `main.py` เรียก `sys.stdout.reconfigure(utf-8)`
+  ตอนเริ่ม; สคริปต์ทดสอบ ad-hoc ต้องตั้ง `PYTHONUTF8=1` เอง
+- ไม่ใช่ git repo
