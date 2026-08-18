@@ -76,11 +76,20 @@ Create Task → Trigger: Daily + *Repeat every 1 hour* / Indefinitely → Action
 ## ปรับแต่ง
 
 - **บนเครื่องตัวเอง:** แก้ในไฟล์ `config.ini` ส่วน `[settings]`
-- **บนคลาวด์:** แก้ที่ repository **Variables** (`REGIONS`, `TOP_N`)
+- **บนคลาวด์:** แก้ที่ repository **Variables** (Settings → Secrets and variables → Actions → Variables)
 
-`regions` ใช้ slug ตาม URL ของ trends24.in เช่น `thailand`, `worldwide`, `japan`,
-`united-states`, `united-kingdom` (เพิ่มป้าย+ธงได้ที่ `REGION_LABELS` ใน `trends.py`)
+| ตั้งค่า | config.ini | คลาวด์ (Variable) | ความหมาย |
+|--------|-----------|------------------|----------|
+| พื้นที่ | `regions` | `REGIONS` | slug ของ trends24.in เช่น `thailand, worldwide, japan, united-states` |
+| จำนวน | `top_n` | `TOP_N` | เทรนด์สูงสุดต่อพื้นที่ |
+| ส่งเฉพาะมีของใหม่ | `only_on_change` | `ONLY_ON_CHANGE` | `true` = ไม่ส่งซ้ำถ้าเทรนด์ไม่เปลี่ยน |
+| คำที่ติดตาม | `keywords` | `KEYWORDS` | เช่น `redkiss, blackpink` — ติดเทรนด์เมื่อไรมี 📢 เด้งเน้น |
+| ช่วงเงียบ | `quiet_hours` | `QUIET_HOURS` | เวลาไทย เช่น `0-7` = งด 00:00–06:59 (ข้ามเที่ยงคืนได้ เช่น `23-7`) |
+
+(เพิ่มพื้นที่+ธงใหม่ได้ที่ `REGION_LABELS` ใน `trends.py`)
 
 ## หมายเหตุ
 
-ใช้แหล่งฟรี ไม่ต้องมี X API key — ถ้า trends24.in เปลี่ยนโครงสร้าง HTML อาจต้องปรับ selector ใน `trends.py`
+- ใช้แหล่งฟรี ไม่ต้องมี X API key — ถ้า trends24.in เปลี่ยนโครงสร้าง HTML อาจต้องปรับ selector ใน `trends.py`
+- **ไม่มียอดทวีต** — X ซ่อนตัวเลข volume ไว้หลัง tier เสียเงิน และเว็บ aggregator ฟรีก็เลิกโชว์แล้ว
+  จึงใช้ **อันดับ + ลูกศรขึ้น/ลง (🔺🔻)** เป็นตัวบอกความแรงแทน

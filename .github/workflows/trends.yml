@@ -31,6 +31,9 @@ jobs:
           CHAT_ID: ${{ secrets.CHAT_ID }}
           REGIONS: ${{ vars.REGIONS || 'thailand, worldwide' }}
           TOP_N: ${{ vars.TOP_N || '10' }}
+          KEYWORDS: ${{ vars.KEYWORDS }}
+          QUIET_HOURS: ${{ vars.QUIET_HOURS }}
+          ONLY_ON_CHANGE: ${{ vars.ONLY_ON_CHANGE || 'true' }}
         run: python main.py
 
       - name: จำอันดับรอบนี้ไว้ (commit state.json)

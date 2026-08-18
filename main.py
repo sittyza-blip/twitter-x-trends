@@ -17,6 +17,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from notifier import send_message
 from trends import fetch_trends, region_label
@@ -30,6 +31,7 @@ except (AttributeError, ValueError):
 HERE = Path(__file__).parent
 CONFIG_PATH = HERE / "config.ini"
 STATE_PATH = HERE / "state.json"  # เก็บเทรนด์รอบก่อน ไว้ทำเครื่องหมาย "ใหม่"
+TZ = ZoneInfo("Asia/Bangkok")  # แสดงเวลาไทยเสมอ (คลาวด์รันด้วย UTC)
 
 
 def load_settings() -> dict:
@@ -44,6 +46,9 @@ def load_settings() -> dict:
             "chat_id": env_chat.strip(),
             "regions": os.environ.get("REGIONS", "thailand, worldwide"),
             "top_n": int(os.environ.get("TOP_N", "10")),
+            "keywords": os.environ.get("KEYWORDS", ""),
+            "quiet_hours": os.environ.get("QUIET_HOURS", ""),
+            "only_on_change": os.environ.get("ONLY_ON_CHANGE", "true"),
         }
 
     if not CONFIG_PATH.exists():
@@ -54,12 +59,41 @@ def load_settings() -> dict:
         )
     cfg = configparser.ConfigParser()
     cfg.read(CONFIG_PATH, encoding="utf-8")
+    s = cfg["settings"]
     return {
         "bot_token": cfg["telegram"]["bot_token"].strip(),
         "chat_id": cfg["telegram"]["chat_id"].strip(),
-        "regions": cfg["settings"].get("regions", "thailand, worldwide"),
-        "top_n": cfg["settings"].getint("top_n", fallback=10),
+        "regions": s.get("regions", "thailand, worldwide"),
+        "top_n": s.getint("top_n", fallback=10),
+        "keywords": s.get("keywords", ""),
+        "quiet_hours": s.get("quiet_hours", ""),
+        "only_on_change": s.get("only_on_change", "true"),
     }
+
+
+def _as_bool(value: str) -> bool:
+    return str(value).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _parse_list(value: str) -> list[str]:
+    return [x.strip() for x in value.split(",") if x.strip()]
+
+
+def in_quiet_hours(quiet_hours: str, now: datetime) -> bool:
+    """quiet_hours รูปแบบ "start-end" เช่น "0-7" (งดส่ง 00:00–06:59 เวลาไทย)
+    รองรับข้ามเที่ยงคืน เช่น "22-6". ค่าว่าง = ไม่งดเลย
+    """
+    quiet_hours = quiet_hours.strip()
+    if not quiet_hours or "-" not in quiet_hours:
+        return False
+    try:
+        start, end = (int(x) for x in quiet_hours.split("-", 1))
+    except ValueError:
+        return False
+    h = now.hour
+    if start <= end:
+        return start <= h < end
+    return h >= start or h < end  # ช่วงข้ามเที่ยงคืน
 
 
 def load_state() -> dict[str, list[str]]:
@@ -78,7 +112,7 @@ def save_state(state: dict[str, list[str]]) -> None:
 
 
 def _rank_marker(name: str, cur_rank: int, prev_names: list[str]) -> str:
-    """คืนเครื่องหมายบอกสถานะอันดับเทียบรอบก่อน: 🆕 / ▲n / ▼n / เท่าเดิม"""
+    """คืนเครื่องหมายบอกสถานะอันดับเทียบรอบก่อน: 🆕 / 🔺n / 🔻n / เท่าเดิม"""
     if name not in prev_names:
         return " 🆕"
     prev_rank = prev_names.index(name) + 1  # อันดับเดิม (1-based)
@@ -91,48 +125,72 @@ def _rank_marker(name: str, cur_rank: int, prev_names: list[str]) -> str:
 
 
 def build_message(
-    regions: list[str], top_n: int, prev: dict[str, list[str]]
+    regions: list[str],
+    top_n: int,
+    prev: dict[str, list[str]],
+    keywords: list[str],
 ) -> tuple[str, dict[str, list[str]]]:
     """สร้างข้อความ + คืน state ใหม่ (เก็บเป็นรายชื่อเรียงตามอันดับ) ไว้บันทึก"""
-    now = datetime.now().strftime("%d/%m/%Y %H:%M") + " น."
-    lines = [f"<b>🔥 เทรนด์ X ล่าสุด</b>  <i>{now}</i>"]
+    now = datetime.now(TZ).strftime("%d/%m/%Y %H:%M") + " น."
+    body: list[str] = []
     new_state: dict[str, list[str]] = {}
+    hits: list[str] = []  # เทรนด์ที่ตรง keyword ที่ติดตาม
+    kw_lower = [k.lower() for k in keywords]
 
     for region in regions:
         try:
             trends = fetch_trends(region, top_n=top_n)
         except Exception as exc:  # noqa: BLE001 - อยากให้รอบอื่นทำงานต่อ
-            lines.append(f"\n{region_label(region)}\n⚠️ ดึงไม่สำเร็จ: {exc}")
+            body.append(f"\n{region_label(region)}\n⚠️ ดึงไม่สำเร็จ: {exc}")
             new_state[region] = prev.get(region, [])
             continue
 
         new_state[region] = [t["name"] for t in trends]
         prev_names = prev.get(region, [])
-        lines.append(f"\n{region_label(region)}")
+        body.append(f"\n{region_label(region)}")
         if not trends:
-            lines.append("(ไม่มีข้อมูล)")
+            body.append("(ไม่มีข้อมูล)")
             continue
         for i, t in enumerate(trends, 1):
             marker = _rank_marker(t["name"], i, prev_names)
             name = html.escape(t["name"])
             url = html.escape(t["url"], quote=True)
-            # ชื่อเทรนด์เป็นลิงก์กดเปิด X ได้เลย
+            is_hit = any(k in t["name"].lower() for k in kw_lower)
+            star = " 📢" if is_hit else ""
             link = f'<a href="{url}">{name}</a>' if url else name
-            lines.append(f"{i}. {link}{marker}")
+            body.append(f"{i}. {link}{marker}{star}")
+            if is_hit:
+                hits.append(f"📢 <b>{name}</b> — {region_label(region)} (อันดับ {i})")
 
-    lines.append("\n<i>🔺/🔻 = อันดับขึ้น/ลงจากรอบก่อน · 🆕 = เพิ่งติดเทรนด์</i>")
-    return "\n".join(lines), new_state
+    header = [f"<b>🔥 เทรนด์ X ล่าสุด</b>  <i>{now}</i>"]
+    if hits:
+        header.append("\n<b>คำที่คุณติดตามกำลังติดเทรนด์!</b>")
+        header.extend(hits)
+    footer = ["\n<i>🔺/🔻 = อันดับขึ้น/ลงจากรอบก่อน · 🆕 = เพิ่งติดเทรนด์"
+              + (" · 📢 = คำที่ติดตาม" if keywords else "") + "</i>"]
+    return "\n".join(header + body + footer), new_state
 
 
 def run_once(settings: dict) -> None:
-    regions = [r.strip() for r in settings["regions"].split(",") if r.strip()]
+    regions = _parse_list(settings["regions"])
+    keywords = _parse_list(settings.get("keywords", ""))
     top_n = settings["top_n"]
 
+    now = datetime.now(TZ)
+    if in_quiet_hours(settings.get("quiet_hours", ""), now):
+        print(f"[{now:%H:%M}] 😴 อยู่ในช่วงเงียบ ({settings['quiet_hours']}) — ไม่ส่ง")
+        return
+
     prev = load_state()
-    message, new_state = build_message(regions, top_n, prev)
+    message, new_state = build_message(regions, top_n, prev, keywords)
+
+    if _as_bool(settings.get("only_on_change", "true")) and new_state == prev:
+        print(f"[{now:%H:%M}] ⏸️ เทรนด์ไม่เปลี่ยนจากรอบก่อน — ไม่ส่งซ้ำ")
+        return
+
     send_message(settings["bot_token"], settings["chat_id"], message)
     save_state(new_state)
-    print(f"[{datetime.now():%H:%M:%S}] ✅ ส่งแจ้งเตือนแล้ว ({', '.join(regions)})")
+    print(f"[{now:%H:%M}] ✅ ส่งแจ้งเตือนแล้ว ({', '.join(regions)})")
 
 
 def main() -> None:
@@ -156,7 +214,7 @@ def main() -> None:
         try:
             run_once(settings)
         except Exception as exc:  # noqa: BLE001 - ไม่ให้ loop ตาย
-            print(f"[{datetime.now():%H:%M:%S}] ⚠️ ผิดพลาด: {exc}")
+            print(f"[{datetime.now(TZ):%H:%M:%S}] ⚠️ ผิดพลาด: {exc}")
         time.sleep(args.interval * 60)
 
 

@@ -48,9 +48,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **[notifier.py](notifier.py)** — ส่งเข้า Telegram Bot API (`sendMessage`, `parse_mode=HTML`)
 - **[main.py](main.py)** — orchestrator: อ่าน settings → ดึงทุก region → สร้างข้อความ → ส่ง → บันทึก state
 
-**Config 2 ทาง:** `load_settings()` อ่าน **env var ก่อน** (`BOT_TOKEN`/`CHAT_ID`/`REGIONS`/`TOP_N` —
-ใช้บน GitHub Actions) ถ้าไม่มีค่อยตกไปอ่าน `config.ini` (รันบนเครื่อง). อย่าเรียก `load_config`
-เดิม — เปลี่ยนเป็น `load_settings` ที่คืน dict แล้ว
+**Config 2 ทาง:** `load_settings()` อ่าน **env var ก่อน** (ใช้บน GitHub Actions) ถ้าไม่มีค่อยตกไป
+อ่าน `config.ini` (รันบนเครื่อง) — คืน dict คีย์: `bot_token`, `chat_id`, `regions`, `top_n`,
+`keywords`, `quiet_hours`, `only_on_change` (env ชื่อตัวใหญ่ทั้งหมด). อย่าเรียก `load_config` เดิม
+
+**ฟีเจอร์ใน run_once/build_message:**
+- `only_on_change` — ถ้า `new_state == prev` (เทรนด์ไม่ขยับ) จะไม่ส่งและไม่ save
+- `keywords` — เทียบ substring แบบ case-insensitive; ที่แมตช์ได้ 📢 + ขึ้นหัวข้อเด่นบนสุด
+- `quiet_hours` — `in_quiet_hours("start-end")` เทียบ**เวลาไทย** (`TZ = Asia/Bangkok`); รองรับข้าม
+  เที่ยงคืน (`23-7`). ต้องมี `tzdata` ใน requirements ไม่งั้น zoneinfo พังบน Windows
+- เวลาในข้อความใช้ `datetime.now(TZ)` เสมอ (คลาวด์รัน UTC)
 
 **State / เครื่องหมายอันดับ:** `state.json` เก็บ **รายชื่อเรียงตามอันดับ** ต่อ region.
 `_rank_marker()` เทียบชื่อ+ตำแหน่งกับรอบก่อน → 🆕 (ใหม่) / 🔺n (ขึ้น) / 🔻n (ลง). ลบ `state.json`
