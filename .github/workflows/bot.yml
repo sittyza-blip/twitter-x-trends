@@ -1,0 +1,31 @@
+name: รับคำสั่งเทรนด์จาก Telegram
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # เช็คคำสั่งใหม่ทุก 5 นาที
+  workflow_dispatch: {}
+
+concurrency:
+  group: bot                 # กันไม่ให้รอบซ้อนกัน
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: เช็คและตอบคำสั่งใน Telegram
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          REGIONS: ${{ vars.REGIONS || 'thailand, worldwide' }}
+          TOP_N: ${{ vars.TOP_N || '10' }}
+        run: python bot.py

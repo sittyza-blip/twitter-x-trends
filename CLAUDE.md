@@ -29,7 +29,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 
 การรันอัตโนมัติมี 2 ทาง: (1) บนเครื่อง — Windows Task Scheduler เรียก `run_hourly.bat`;
-(2) บนคลาวด์ — GitHub Actions cron รายชั่วโมง ([.github/workflows/trends.yml](.github/workflows/trends.yml))
+(2) บนคลาวด์ — GitHub Actions 2 workflow: [trends.yml](.github/workflows/trends.yml) (cron ราย
+ชั่วโมง = ส่งออก) และ [bot.yml](.github/workflows/bot.yml) (cron ทุก 5 นาที = รับคำสั่ง `bot.py`).
+bot.yml ต้องให้ repo เป็น **Public** ไม่งั้นเกินโควต้านาทีฟรี (ทุก 5 นาที = ~8,640 รอบ/เดือน)
 
 **PowerShell** ต้องมี `.\` นำหน้า path ของ .exe เสมอ (`.\.venv\Scripts\python.exe`) ไม่งั้นมันตีความ
 `.venv` เป็นชื่อ module; cmd ไม่ต้องมี
@@ -46,6 +48,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   เทรนด์ภาษาญี่ปุ่น/ไทยในหน้า worldwide จะเป็น mojibake. **ไม่มียอดทวีต** — trends24 ปล่อย
   `data-count` ว่างในทุก snapshot
 - **[notifier.py](notifier.py)** — ส่งเข้า Telegram Bot API (`sendMessage`, `parse_mode=HTML`)
+- **[bot.py](bot.py)** — รับคำสั่งขาเข้า (`/now`, `/thailand`, `/help`). `poll_once()` ดึง
+  `getUpdates` → ตอบ → **acknowledge ด้วย `getUpdates(offset=last+1)`** จึงไม่ต้องเก็บ offset/commit
+  (ต่างจาก state.json). ตอบเฉพาะ `chat_id` เจ้าของเท่านั้น. `--serve` = long-poll บนเครื่อง
 - **[main.py](main.py)** — orchestrator: อ่าน settings → ดึงทุก region → สร้างข้อความ → ส่ง → บันทึก state
 
 **Config 2 ทาง:** `load_settings()` อ่าน **env var ก่อน** (ใช้บน GitHub Actions) ถ้าไม่มีค่อยตกไป
