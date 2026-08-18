@@ -51,18 +51,29 @@ bot.yml ต้องให้ repo เป็น **Public** ไม่งั้น
 - **[bot.py](bot.py)** — รับคำสั่งขาเข้า (`/now`, `/thailand`, `/help`). `poll_once()` ดึง
   `getUpdates` → ตอบ → **acknowledge ด้วย `getUpdates(offset=last+1)`** จึงไม่ต้องเก็บ offset/commit
   (ต่างจาก state.json). ตอบเฉพาะ `chat_id` เจ้าของเท่านั้น. `--serve` = long-poll บนเครื่อง
-- **[main.py](main.py)** — orchestrator: อ่าน settings → ดึงทุก region → สร้างข้อความ → ส่ง → บันทึก state
+- **[main.py](main.py)** — orchestrator. `fetch_all()` (ดึง+จับ error แยกจากการจัดข้อความ) →
+  `update_history()` → `build_message()` → `_broadcast()`. โหมด: ปกติ / `--loop` / `--daily`
 
 **Config 2 ทาง:** `load_settings()` อ่าน **env var ก่อน** (ใช้บน GitHub Actions) ถ้าไม่มีค่อยตกไป
 อ่าน `config.ini` (รันบนเครื่อง) — คืน dict คีย์: `bot_token`, `chat_id`, `regions`, `top_n`,
 `keywords`, `quiet_hours`, `only_on_change` (env ชื่อตัวใหญ่ทั้งหมด). อย่าเรียก `load_config` เดิม
 
 **ฟีเจอร์ใน run_once/build_message:**
-- `only_on_change` — ถ้า `new_state == prev` (เทรนด์ไม่ขยับ) จะไม่ส่งและไม่ save
+- `only_on_change` — ถ้า `new_state == prev` **และไม่มี error** จะไม่ส่ง (แต่ยัง save state/history);
+  มี error เมื่อไร **บังคับส่งเสมอ** เพื่อเตือน
+- **Scraper alert** — `fetch_all` ถือว่า region พังถ้า raise **หรือได้ลิสต์ว่าง** (เว็บเปลี่ยน
+  โครงสร้างมักได้ว่าง ไม่ raise). พังหมด = แบนเนอร์ 🚨 / พังบางส่วน = ⚠️
 - `keywords` — เทียบ substring แบบ case-insensitive; ที่แมตช์ได้ 📢 + ขึ้นหัวข้อเด่นบนสุด
-- `quiet_hours` — `in_quiet_hours("start-end")` เทียบ**เวลาไทย** (`TZ = Asia/Bangkok`); รองรับข้าม
-  เที่ยงคืน (`23-7`). ต้องมี `tzdata` ใน requirements ไม่งั้น zoneinfo พังบน Windows
+- `quiet_hours` — `in_quiet_hours("start-end")` เทียบ**เวลาไทย**; รองรับข้ามเที่ยงคืน (`23-7`).
+  ต้องมี `tzdata` ใน requirements ไม่งั้น zoneinfo พังบน Windows
+- `channel_id` — `_broadcast()` ส่งเข้าแชทเจ้าของ + channel (ถ้าตั้ง); channel พังไม่ทำแชทหลักพัง
 - เวลาในข้อความใช้ `datetime.now(TZ)` เสมอ (คลาวด์รัน UTC)
+
+**History / ⏱️ / สรุปรายวัน:** `history.json` นับจำนวนชั่วโมงที่แต่ละเทรนด์ติดในวันนี้ (ต่อ region),
+รีเซ็ตเมื่อขึ้นวันใหม่ (เทียบ Thai date). `update_history()` +1 ทุกรอบที่ดึงสำเร็จ → ใช้โชว์ ⏱️Nh
+(N≥2) และ `build_daily_summary()` (โหมด `--daily`, workflow [daily.yml](.github/workflows/daily.yml)
+รัน 13:00 UTC = 20:00 ไทย). `history.json` git-ignore แต่ workflow `git add -f` commit กลับ
+เหมือน state.json
 
 **State / เครื่องหมายอันดับ:** `state.json` เก็บ **รายชื่อเรียงตามอันดับ** ต่อ region.
 `_rank_marker()` เทียบชื่อ+ตำแหน่งกับรอบก่อน → 🆕 (ใหม่) / 🔺n (ขึ้น) / 🔻n (ลง). ลบ `state.json`

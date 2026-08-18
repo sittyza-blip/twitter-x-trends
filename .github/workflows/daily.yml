@@ -1,0 +1,30 @@
+name: สรุปเทรนด์ประจำวัน
+
+on:
+  schedule:
+    - cron: "0 13 * * *"   # 13:00 UTC = 20:00 เวลาไทย (สรุปก่อนจบวัน)
+  workflow_dispatch: {}
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4   # ดึง history.json ที่ trends.yml commit ไว้
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: ส่งสรุปประจำวัน
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          CHANNEL_ID: ${{ vars.CHANNEL_ID }}
+        run: python main.py --daily
