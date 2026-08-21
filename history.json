@@ -2,12 +2,12 @@
   "date": "2026-08-22",
   "counts": {
     "thailand": {
-      "#วาดฝันวันวิวาห์EP10": 5,
-      "LINGORM ILF EP10": 5,
-      "#PondPhuwinConcertD1": 5,
-      "#WEIRDO101SeriesEP2": 5,
+      "#วาดฝันวันวิวาห์EP10": 6,
+      "LINGORM ILF EP10": 6,
+      "#PondPhuwinConcertD1": 6,
+      "#WEIRDO101SeriesEP2": 6,
       "#อย่าขอพี่เจนEP9": 1,
-      "STARTING ORBIT OF LOVE": 5,
+      "STARTING ORBIT OF LOVE": 6,
       "DBTE RULES EP9": 5,
       "#เก่งน้ําปิง": 5,
       "WITH JAEMIN GLOR10US EVERMORE": 3,
@@ -15,7 +15,12 @@
       "#KengNamping": 4,
       "BLOODY PARADISE OUT NOW": 1,
       "Lila": 3,
-      "Clara": 2
+      "Clara": 2,
+      "#27thHBDKENG": 1,
+      "BE MY PLAYER TWO EP6": 1,
+      "#ซอโซ่ล่ามธีร์EP6": 1,
+      "HUG E LHEE Q2": 1,
+      "MV TrueMoney TFO": 1
     },
     "worldwide": {
       "#วาดฝันวันวิวาห์EP10": 4,
@@ -30,16 +35,18 @@
       "#Tシャツが乾くまで": 1,
       "#AsırlıkGece": 1,
       "Vouch": 2,
-      "Arsenal": 2,
-      "#ERZvGS": 2,
-      "Tzolis": 2,
-      "#ARSCOV": 2,
+      "Arsenal": 3,
+      "#ERZvGS": 3,
+      "Tzolis": 3,
+      "#ARSCOV": 3,
       "Kai Havertz": 2,
-      "#الاتحاد_القادسيه": 2,
+      "#الاتحاد_القادسيه": 3,
       "ハヴァーツ": 1,
-      "Klay": 1,
-      "Odegaard": 1,
-      "Saka": 1
+      "Klay": 2,
+      "Odegaard": 2,
+      "Saka": 2,
+      "#روتانا_سبورت_مع_وليد": 1,
+      "#ittihad_need_new_signing": 1
     }
   }
 }
