@@ -2,23 +2,23 @@
   "date": "2026-08-23",
   "counts": {
     "thailand": {
-      "#อรุณรุ่งEP10": 6,
-      "#PondPhuwinConcertD2": 6,
-      "THE EDGE OF HORIZON EP10": 6,
+      "#อรุณรุ่งEP10": 7,
+      "#PondPhuwinConcertD2": 7,
+      "THE EDGE OF HORIZON EP10": 7,
       "PONDPHUWIN SOUL ODYSSEY": 5,
       "#โซ่รักอัคนีตอนที่7": 5,
-      "THE FIRE ACCEPTING LOVE": 6,
+      "THE FIRE ACCEPTING LOVE": 7,
       "#GELBOYS2EP3": 5,
       "#ที่สามมาบัสกิ้ง": 5,
       "YOUR THIRD BUSKING": 5,
       "LINGORM PRESENTER MEGA WE CARE": 4,
       "HEART OF BUS": 1,
-      "#LYKNReflexionConcert": 1,
-      "#วาดฝันวันวิวาห์EP10": 1,
-      "LINGORM ILF EP10": 1,
-      "#NuNew2ndConcert": 1,
-      "KNP FAN MEET": 1,
-      "NUNEW IN IMPACT SOON": 1
+      "#LYKNReflexionConcert": 2,
+      "#วาดฝันวันวิวาห์EP10": 2,
+      "LINGORM ILF EP10": 2,
+      "#NuNew2ndConcert": 2,
+      "KNP FAN MEET": 2,
+      "NUNEW IN IMPACT SOON": 2
     },
     "worldwide": {
       "#SixTONESANN": 1,
@@ -31,9 +31,9 @@
       "PONDPHUWIN SOUL ODYSSEY": 1,
       "#踊る大捜査線": 1,
       "#BLEACH_anime": 1,
-      "緊急地震速報": 5,
+      "緊急地震速報": 6,
       "震度5弱": 5,
-      "地震大丈夫": 5,
+      "地震大丈夫": 6,
       "防災無線": 3,
       "Spurs": 5,
       "地震びっくり": 2,
@@ -42,14 +42,17 @@
       "Tottenham": 4,
       "地震警報": 1,
       "地震のせい": 1,
-      "#FBvKON": 3,
-      "#سبتيات_الازرق": 3,
+      "#FBvKON": 4,
+      "#سبتيات_الازرق": 4,
       "アラート": 1,
       "#الاهلي_ابها": 1,
-      "Canada": 2,
-      "Vini": 1,
+      "Canada": 3,
+      "Vini": 2,
       "#روتانا_سبورت__مع_وليد": 1,
-      "Espanyol": 1
+      "Espanyol": 2,
+      "Espi": 1,
+      "Mourinho": 1,
+      "地震の影響": 1
     }
   }
 }
