@@ -2,16 +2,17 @@
   "date": "2026-08-23",
   "counts": {
     "thailand": {
-      "#อรุณรุ่งEP10": 3,
-      "#PondPhuwinConcertD2": 3,
-      "THE EDGE OF HORIZON EP10": 3,
-      "PONDPHUWIN SOUL ODYSSEY": 3,
-      "#โซ่รักอัคนีตอนที่7": 3,
-      "THE FIRE ACCEPTING LOVE": 3,
-      "#GELBOYS2EP3": 3,
-      "#ที่สามมาบัสกิ้ง": 3,
-      "YOUR THIRD BUSKING": 3,
-      "LINGORM PRESENTER MEGA WE CARE": 3
+      "#อรุณรุ่งEP10": 4,
+      "#PondPhuwinConcertD2": 4,
+      "THE EDGE OF HORIZON EP10": 4,
+      "PONDPHUWIN SOUL ODYSSEY": 4,
+      "#โซ่รักอัคนีตอนที่7": 4,
+      "THE FIRE ACCEPTING LOVE": 4,
+      "#GELBOYS2EP3": 4,
+      "#ที่สามมาบัสกิ้ง": 4,
+      "YOUR THIRD BUSKING": 4,
+      "LINGORM PRESENTER MEGA WE CARE": 3,
+      "HEART OF BUS": 1
     },
     "worldwide": {
       "#SixTONESANN": 1,
@@ -24,17 +25,20 @@
       "PONDPHUWIN SOUL ODYSSEY": 1,
       "#踊る大捜査線": 1,
       "#BLEACH_anime": 1,
-      "緊急地震速報": 2,
-      "震度5弱": 2,
-      "地震大丈夫": 2,
-      "防災無線": 2,
-      "Spurs": 2,
+      "緊急地震速報": 3,
+      "震度5弱": 3,
+      "地震大丈夫": 3,
+      "防災無線": 3,
+      "Spurs": 3,
       "地震びっくり": 2,
       "ビックリ": 2,
-      "Brentford": 2,
-      "Tottenham": 2,
+      "Brentford": 3,
+      "Tottenham": 3,
       "地震警報": 1,
-      "地震のせい": 1
+      "地震のせい": 1,
+      "#FBvKON": 1,
+      "#سبتيات_الازرق": 1,
+      "アラート": 1
     }
   }
 }
