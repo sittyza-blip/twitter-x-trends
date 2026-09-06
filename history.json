@@ -2,28 +2,38 @@
   "date": "2026-09-07",
   "counts": {
     "thailand": {
-      "#GeminiConcertD3": 1,
-      "GEMINI ART VENTURE FINALE": 1,
-      "#ที่สามของเธอEP7": 1,
-      "YOUR THIRD SERIES EP7": 1,
-      "#LOVEx3_EP4": 1,
+      "#GeminiConcertD3": 2,
+      "GEMINI ART VENTURE FINALE": 2,
+      "#ที่สามของเธอEP7": 2,
+      "YOUR THIRD SERIES EP7": 2,
+      "#LOVEx3_EP4": 2,
       "#ปิ๊ปป๋อไม่ดื้อครับ": 1,
-      "#JossGawinFMinDC": 1,
-      "JOSSGAWIN IN DC R1": 1,
-      "HBD BEVER PATSAPON 28TH": 1,
-      "PEEK A POOO FANMEET": 1
+      "#JossGawinFMinDC": 2,
+      "JOSSGAWIN IN DC R1": 2,
+      "HBD BEVER PATSAPON 28TH": 2,
+      "PEEK A POOO FANMEET": 1,
+      "#ZeeNuNewinNYC": 1,
+      "ZEENUNEW IN NEW YORK": 1
     },
     "worldwide": {
-      "Arsenal": 1,
+      "Arsenal": 2,
       "Havertz": 1,
       "Rogers": 1,
       "Odegaard": 1,
-      "#FileninSultanları": 1,
+      "#FileninSultanları": 2,
       "Carrick": 1,
       "Alonso": 1,
       "Martinez": 1,
       "Tzolis": 1,
-      "تشيلسي": 1
+      "تشيلسي": 1,
+      "#روتانا_سبورت_مع_وليد": 1,
+      "Chelsea": 1,
+      "Arrascaeta": 1,
+      "Avrupa Şampiyonu": 1,
+      "SAMUEL LINO": 1,
+      "Atatürk": 1,
+      "#JuveMilan": 1,
+      "#OMPFC": 1
     }
   }
 }
