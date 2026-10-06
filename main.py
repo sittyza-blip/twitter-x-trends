@@ -190,8 +190,7 @@ def build_message(
         if res["error"]:
             failed.append(region)
             new_state[region] = prev.get(region, [])  # คงค่าเดิมไว้
-            note = "ดึงไม่ได้ (เว็บอาจเปลี่ยนโครงสร้าง)" if res["error"] == "empty" \
-                else f"ดึงไม่สำเร็จ: {res['error']}"
+            note = f"ดึงไม่สำเร็จ: {html.escape(res['error'])}"
             body.append(f"\n{region_label(region)}\n⚠️ {note}")
             continue
 

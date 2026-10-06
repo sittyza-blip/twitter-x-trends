@@ -1,10 +1,14 @@
 """ดึงเทรนด์จาก trends24.in (แหล่งรวมเทรนด์ X/Twitter ฟรี)"""
 from __future__ import annotations
 
+import time
+from urllib.parse import quote
+
 import requests
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://trends24.in"
+FALLBACK_URL = "https://getdaytrends.com"  # สำรองเมื่อ trends24 ใช้ไม่ได้
 
 # slug ของแต่ละพื้นที่ -> ชื่อที่อ่านง่ายสำหรับแสดงผล
 REGION_LABELS = {
@@ -33,23 +37,35 @@ def _region_url(region: str) -> str:
     return f"{BASE_URL}/{region}/"
 
 
-def fetch_trends(region: str, top_n: int = 10, timeout: int = 20) -> list[dict]:
-    """คืนเทรนด์ล่าสุดของพื้นที่นั้น (เรียงตามอันดับ)
+def _get_html(url: str, timeout: int, retries: int = 2) -> str:
+    """GET พร้อมลองซ้ำ; ถ้าไม่สำเร็จ raise RuntimeError ที่บอก HTTP code จริง"""
+    last = "unknown"
+    for attempt in range(retries + 1):
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=timeout)
+        except requests.RequestException as exc:
+            last = f"{type(exc).__name__}"
+        else:
+            if resp.status_code == 200:
+                resp.encoding = "utf-8"  # requests เดาผิดในบางหน้า
+                return resp.text
+            last = f"HTTP {resp.status_code}"
+        if attempt < retries:
+            time.sleep(2 * (attempt + 1))
+    raise RuntimeError(f"{last} @ {url}")
 
-    แต่ละรายการเป็น dict: {"name": ชื่อเทรนด์, "url": ลิงก์ค้นหาใน X}
-    trends24.in แสดงหลาย snapshot ต่อวัน — เราเอาการ์ดใบแรก (ล่าสุดที่สุด)
-    """
-    resp = requests.get(_region_url(region), headers=HEADERS, timeout=timeout)
-    resp.raise_for_status()
-    resp.encoding = "utf-8"  # หน้าเว็บเป็น UTF-8 แต่ requests เดาผิดในบางหน้า
-    soup = BeautifulSoup(resp.text, "html.parser")
 
+def _x_search_url(name: str) -> str:
+    return "https://x.com/search?q=" + quote(name)
+
+
+def _parse_trends24(html_text: str, top_n: int) -> list[dict]:
+    soup = BeautifulSoup(html_text, "html.parser")
     # หน้าเว็บมีหลาย snapshot ต่อวัน แต่ละอันคือ <ol class=trend-card__list>
     # ใบแรกคือ snapshot ล่าสุดที่สุด
     card = soup.select_one("ol.trend-card__list")
     if card is None:
         return []
-
     trends: list[dict] = []
     seen: set[str] = set()
     for a in card.select("a.trend-link"):
@@ -63,6 +79,46 @@ def fetch_trends(region: str, top_n: int = 10, timeout: int = 20) -> list[dict]:
         if len(trends) >= top_n:
             break
     return trends
+
+
+def _parse_getdaytrends(html_text: str, top_n: int) -> list[dict]:
+    soup = BeautifulSoup(html_text, "html.parser")
+    trends: list[dict] = []
+    seen: set[str] = set()
+    for a in soup.select("table tbody tr td.main a"):
+        name = a.get_text(strip=True)
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        trends.append({"name": name, "url": _x_search_url(name)})
+        if len(trends) >= top_n:
+            break
+    return trends
+
+
+def fetch_trends(region: str, top_n: int = 10, timeout: int = 20) -> list[dict]:
+    """คืนเทรนด์ล่าสุดของพื้นที่นั้น (เรียงตามอันดับ)
+
+    แต่ละรายการเป็น dict: {"name": ชื่อเทรนด์, "url": ลิงก์ค้นหาใน X}
+    ลอง trends24.in ก่อน ถ้าล้ม (โดนบล็อก IP / เว็บเปลี่ยนโครงสร้าง) ตกไป getdaytrends.com
+    ถ้าล้มทั้งคู่ raise RuntimeError ที่รวมสาเหตุของทั้งสองแหล่ง
+    """
+    sources = (
+        ("trends24", _region_url(region), _parse_trends24),
+        ("getdaytrends", f"{FALLBACK_URL}/" + ("" if region == "worldwide" else f"{region}/"),
+         _parse_getdaytrends),
+    )
+    errors: list[str] = []
+    for label, url, parse in sources:
+        try:
+            trends = parse(_get_html(url, timeout), top_n)
+        except Exception as exc:  # noqa: BLE001 - ลองแหล่งถัดไป
+            errors.append(f"{label}: {exc}")
+            continue
+        if trends:
+            return trends
+        errors.append(f"{label}: 200 แต่หาเทรนด์ไม่เจอ (โครงสร้างหน้าเปลี่ยน/โดนหน้าบล็อก)")
+    raise RuntimeError(" | ".join(errors))
 
 
 if __name__ == "__main__":
