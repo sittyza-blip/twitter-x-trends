@@ -2,28 +2,37 @@
   "date": "2026-10-19",
   "counts": {
     "thailand": {
-      "#LingOrmBetweenUsConcertD2": 1,
-      "THE WORLD BETWEEN LINGORM D2": 1,
-      "#FourthConcertD3": 1,
-      "OH MY BEST DAY WITH FOURTH": 1,
+      "#LingOrmBetweenUsConcertD2": 2,
+      "THE WORLD BETWEEN LINGORM D2": 2,
+      "#FourthConcertD3": 2,
+      "OH MY BEST DAY WITH FOURTH": 2,
       "#FairwayOfLoveEP7": 1,
-      "#GoodBoySeriesEP2": 1,
-      "#LOVEx3_EP10": 1,
-      "LOVEX3 ONE LAST FIREWORK": 1,
-      "RUTHJI SOMETHING IS UP": 1,
-      "GRABFOOD X EMIBONNIEANY": 1
+      "#GoodBoySeriesEP2": 2,
+      "#LOVEx3_EP10": 2,
+      "LOVEX3 ONE LAST FIREWORK": 2,
+      "RUTHJI SOMETHING IS UP": 2,
+      "GRABFOOD X EMIBONNIEANY": 1,
+      "#Euro30thBirthday": 1,
+      "EURO CHAPTER 30": 1
     },
     "worldwide": {
-      "Travis Hunter": 1,
+      "Travis Hunter": 2,
       "carrick": 1,
-      "Lua Blanco": 1,
+      "Lua Blanco": 2,
       "Texans": 1,
       "#乃木坂工事中": 1,
       "チンギス": 1,
       "Jags": 1,
       "#Vivant": 1,
-      "#TigerShroff": 1,
-      "Cam Little": 1
+      "#TigerShroff": 2,
+      "Cam Little": 1,
+      "#AtoPelaDemocracia": 1,
+      "#macron20h": 1,
+      "Arsenal": 1,
+      "AJ Brown": 1,
+      "Steelers": 1,
+      "#حرب_الحوثي_في_الصوره": 1,
+      "#EfeDay": 1
     }
   }
 }
