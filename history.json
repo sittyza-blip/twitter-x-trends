@@ -2,16 +2,22 @@
   "date": "2026-10-27",
   "counts": {
     "thailand": {
-      "#ข่มขลังตอนที่8": 1,
-      "KHOM KHLANG EP8": 1,
+      "#ข่มขลังตอนที่8": 2,
+      "KHOM KHLANG EP8": 2,
       "#ตี๋ตี๋ป๋อป้ายยาวาวาป้ายเปย์": 1,
       "#ตะวันลวงEP6": 1,
       "BENEATH THE LIES EP6": 1,
       "#SFxJesBible": 1,
       "JESBIBLE X TAME": 1,
-      "#EVEANDBOYxLenaMiu": 1,
-      "PNB THE UNDERGROUND": 1,
-      "MATRIX LIVE WITH JUNIOR": 1
+      "#EVEANDBOYxLenaMiu": 2,
+      "PNB THE UNDERGROUND": 2,
+      "MATRIX LIVE WITH JUNIOR": 1,
+      "#MISTINExPUINOONBINT": 1,
+      "#LYKNReflexionConcertD3": 1,
+      "#LUNARisHereMV": 1,
+      "REFLEXION FOREVER": 1,
+      "FIRSTONE 8PER7 1M": 1,
+      "ARNBOOK MEET PNB": 1
     },
     "worldwide": {
       "BLEACH": 1,
@@ -23,7 +29,17 @@
       "#VitoriaDaDemocracia": 1,
       "iPad mini": 1,
       "Brazil": 1,
-      "Komanche": 1
+      "Komanche": 1,
+      "#GSvFB": 1,
+      "#BallonDor": 1,
+      "İsmail Kartal": 1,
+      "Harry Kane": 1,
+      "Kerem": 1,
+      "Fenerbahçe": 1,
+      "Okan": 1,
+      "Mert Hakan": 1,
+      "lamine yamal": 1,
+      "Leao": 1
     }
   }
 }
