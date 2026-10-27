@@ -2,22 +2,25 @@
   "date": "2026-10-27",
   "counts": {
     "thailand": {
-      "#ข่มขลังตอนที่8": 2,
-      "KHOM KHLANG EP8": 2,
+      "#ข่มขลังตอนที่8": 3,
+      "KHOM KHLANG EP8": 3,
       "#ตี๋ตี๋ป๋อป้ายยาวาวาป้ายเปย์": 1,
       "#ตะวันลวงEP6": 1,
       "BENEATH THE LIES EP6": 1,
       "#SFxJesBible": 1,
       "JESBIBLE X TAME": 1,
-      "#EVEANDBOYxLenaMiu": 2,
-      "PNB THE UNDERGROUND": 2,
+      "#EVEANDBOYxLenaMiu": 3,
+      "PNB THE UNDERGROUND": 3,
       "MATRIX LIVE WITH JUNIOR": 1,
-      "#MISTINExPUINOONBINT": 1,
-      "#LYKNReflexionConcertD3": 1,
+      "#MISTINExPUINOONBINT": 2,
+      "#LYKNReflexionConcertD3": 2,
       "#LUNARisHereMV": 1,
-      "REFLEXION FOREVER": 1,
+      "REFLEXION FOREVER": 2,
       "FIRSTONE 8PER7 1M": 1,
-      "ARNBOOK MEET PNB": 1
+      "ARNBOOK MEET PNB": 1,
+      "#FoolInLoveEP6": 1,
+      "SMILEY BESIDE CHARLOTTE27": 1,
+      "ENGFA ENDLESS CHARM27": 1
     },
     "worldwide": {
       "BLEACH": 1,
@@ -33,13 +36,22 @@
       "#GSvFB": 1,
       "#BallonDor": 1,
       "İsmail Kartal": 1,
-      "Harry Kane": 1,
+      "Harry Kane": 2,
       "Kerem": 1,
       "Fenerbahçe": 1,
       "Okan": 1,
       "Mert Hakan": 1,
       "lamine yamal": 1,
-      "Leao": 1
+      "Leao": 1,
+      "Mbappe": 1,
+      "هاري كين": 1,
+      "Cowboys": 1,
+      "Messi": 1,
+      "#WWERAW": 1,
+      "バロンドール": 1,
+      "World Cup": 1,
+      "Olise": 1,
+      "Arrascaeta": 1
     }
   }
 }
