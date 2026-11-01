@@ -2,21 +2,23 @@
   "date": "2026-11-01",
   "counts": {
     "thailand": {
-      "#เขมจิราตลอดกาลEP1": 2,
-      "KHEMJIRA FOREVER EP1": 2,
-      "#MrFanboyEP10": 2,
-      "MR FANBOY CHAPTER 10": 2,
-      "#YouManiacSeriesFinalEP": 2,
-      "MANIAC FINAL MOMENT": 2,
-      "#BornToBeNuNewConcertD1": 2,
+      "#เขมจิราตลอดกาลEP1": 3,
+      "KHEMJIRA FOREVER EP1": 3,
+      "#MrFanboyEP10": 3,
+      "MR FANBOY CHAPTER 10": 3,
+      "#YouManiacSeriesFinalEP": 3,
+      "MANIAC FINAL MOMENT": 3,
+      "#BornToBeNuNewConcertD1": 3,
       "NUNEW 2ND CON DAY1": 2,
       "#PoliceinLoveEP8": 1,
-      "PIL SERIES EP8": 1,
+      "PIL SERIES EP8": 2,
       "#DAOUOFFROADHALLOWEEND2": 1,
-      "Love Hurts": 1
+      "Love Hurts": 1,
+      "#เขมจิราต้องรอดตลอดกาลSeries": 1,
+      "Halloween": 1
     },
     "worldwide": {
-      "Halloween": 2,
+      "Halloween": 3,
       "#FBvGÖZ": 2,
       "#MrFanboyEP10": 2,
       "#เขมจิราตลอดกาลEP1": 1,
@@ -26,13 +28,21 @@
       "ハロウィン": 1,
       "#YouManiacSeriesFinalEP": 1,
       "Kerem": 1,
-      "テーオーエルビス": 1,
+      "テーオーエルビス": 2,
       "#الهلال_الفتح": 1,
       "#CaneloMbilli": 1,
       "#AzizYıldırımİstifa": 1,
       "ميلان": 1,
       "Ferro": 1,
-      "Fermín": 1
+      "Fermín": 1,
+      "フォーエバーヤング": 1,
+      "エバヤン": 1,
+      "#AVigília": 1,
+      "Canelo": 1,
+      "#StarAcademy": 1,
+      "テーオーパスワード": 1,
+      "#全日本大学駅伝": 1,
+      "Indiana": 1
     }
   }
 }
